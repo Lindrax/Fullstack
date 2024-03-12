@@ -1,67 +1,47 @@
-const Header = (props) => {
+import { useState } from 'react'
 
-  return (
-    <div>
-      
-      <h1>{props.course.name}</h1>
-    </div>
-  )
-}
-
-const Content = (props) => {
-  console.log(props.parts.parts[0].name)
+const Statistics = ({ g, b, n }) => {
+  const total = g + b + n
+  const average = (g-b) / total
+  const positive = g/total *100
   return(
     <div>
-      <Part course={props.parts.parts[0].name} exercises={props.parts.parts[0].exercises}/>
-      <Part course={props.parts.parts[1].name} exercises={props.parts.parts[1].exercises}/>
-      <Part course={props.parts.parts[2].name} exercises={props.parts.parts[2].exercises}/>
-    </div>
-  )
-}
-
-const Part = (props) => {
-  return (
-    <div>
-      <p>
-        {props.course} {props.exercises}
-      </p>
-    </div>
-  )
-}
-
-const Total =(props) => {
-  return (
-    <div>
-      <p>
-        Number of exercises {props.parts.parts[0].exercises + props.parts.parts[1].exercises + props.parts.parts[2].exercises}
-      </p>
+      <h1>Statistics</h1>
+      <p>Good {g} </p>
+      <p>Neutral {n}</p>
+      <p>Bad {b}</p>
+      <p>Total {total} </p>
+      <p>Average {average}</p>
+      <p>Positive {positive}% </p>
     </div>
   )
 }
 
 const App = () => {
-  const course = {
-    name: 'Half Stack application development',
-    parts: [
-      {
-        name: 'Fundamentals of React',
-        exercises: 10
-      },
-      {
-        name: 'Using props to pass data',
-        exercises: 7
-      },
-      {
-        name: 'State of a component',
-        exercises: 14
-      }
-    ]
-  }
+  // tallenna napit omaan tilaansa
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
+
+
+
   return (
     <div>
-      <Header course={course} />
-      <Content parts={course}/>
-      <Total parts={course} />
+      <h1>give feedback</h1>
+        <div>
+          
+          <button onClick={() => setGood(good+1)}>
+          Good
+          </button>
+          <button onClick={() => setNeutral(neutral+1)}>
+          Neutral
+          </button>
+          <button onClick={() => setBad(bad+1)}>
+          Bad
+          </button>
+        </div>
+        <Statistics g={good} n={neutral} b={bad}/>
+
     </div>
   )
 }
