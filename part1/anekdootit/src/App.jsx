@@ -1,5 +1,13 @@
 import { useState } from 'react'
 
+const taulu = (num, ary, setAry) => {
+  const copy = [...ary]
+  copy[num] +=1
+  setAry(copy)
+  
+
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -14,13 +22,33 @@ const App = () => {
    
   const [selected, setSelected] = useState(0)
   console.log(selected)
+  const [ary, setAry] =useState(new Uint8Array(7))
+  console.log(ary)
+  const votes= Math.max(...ary)
+  const max = ary.indexOf(votes)
+
+  
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       {anecdotes[selected]}
       <div>
+        <div>
+          has {ary[selected]} votes
+        </div>
       <button onClick={() => setSelected(Math.floor(Math.random()*7))}>
         New anecdote
       </button>
+      <button onClick={() => taulu(selected, ary, setAry)}>
+        Vote
+      </button>
+      </div>
+
+      <div>
+        <h1>Anecdote with most votes</h1>
+        {anecdotes[max]}
+        <p>has {votes} votes</p>
       </div>
     </div>
   )
