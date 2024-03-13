@@ -1,3 +1,4 @@
+import Course from './components/Course'
 
 const App = () => {
   const courses = [
@@ -44,43 +45,11 @@ const App = () => {
       ]
     }
   ]
-
-    const Course = ({course}) => {
-      console.log(course)
-      const Header = ({ course }) => <h1>{course}</h1>
-
-      const Content = ({ parts }) => {
-        
-        return (
-          <div>
-            {parts.map(part => <p>{part.name} {part.exercises}</p>)} 
-          </div>
-        )
-        }
-      const Total = ({parts}) => {
-        
-        const sum = parts.reduce(
-          (total, currentvalue) => {
-            return(total += currentvalue.exercises)
-          }, 0)
-        return (
-          <b> total of {sum} exercises</b>
-        )
-      }
-      
-        return(
-          <div>
-            <Header course={course.name}/>
-            <Content parts={course.parts}/>
-            <Total parts={course.parts}/>
-          </div>
-        )
-        }
         
   return (
     <div>
         {courses.map(course =>
-          <Course course={course}/>
+          <Course key={course.id} course={course}/>
           )}
     </div>
   )
