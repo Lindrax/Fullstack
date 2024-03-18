@@ -67,9 +67,11 @@ const App = () => {
   const addName = (event) =>{
     event.preventDefault()
     let d=0
+    let id=0
     persons.forEach((element, index) => {
       if (element.name === newName) {
         d=1
+        id=element.id
       }
   })
     const newPerson = {
@@ -77,17 +79,28 @@ const App = () => {
       number: newNumber
     }
     if (d==1){
-      alert(`${newName} is already added to phonebook`)
+      if (confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        const person = persons.find(n=> n.id === id)
+        console.log(person)
+        const changedperson = {... person, number : newNumber}
+        console.log(changedperson)
+        personService
+          .update(id, changedperson)
+          .then(response => {
+            setPersons(persons.map(person => person.id !== id ? person : response))
+          })
+      }
     }
     else{
       personService
         .create(newPerson)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
-          setNewName('')
-          setNumber('')
+
         })
     }
+    setNewName('')
+    setNumber('')
   }
 
   const handleNameChange=(event) => {
