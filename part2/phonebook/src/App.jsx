@@ -26,12 +26,14 @@ const NewPerson=({newName, newNumber, handeNumberChange, handleNameChange, addNa
   )
 }
 
-const Showed=({ToShow})=>{
+const Showed=({ToShow, del})=>{
   return(
     <div>
+      <form>
   {ToShow.map(person =>
-    <p key={person.name}> {person.name} {person.number}</p>
+    <p key={person.id}> {person.name} {person.number} <button type="button" onClick={() => del(person.id, person.name)}>delete</button> </p>
   )}
+  </form>
   </div>
   )
 }
@@ -103,6 +105,20 @@ const App = () => {
     setFilt(event.target.value)
   }
 
+  const del = (id, name) => {
+    if (window.confirm(`Do you really want to delete ${name}`)) {
+      console.log(id)
+      personService
+        .del(id)
+        .then(response => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+        .catch(error => {
+          console.log('fail')
+        })
+    }
+}
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -118,7 +134,7 @@ const App = () => {
       />
       <h2>Numbers</h2>
       
-      <Showed ToShow={ToShow}/>
+      <Showed ToShow={ToShow} del={del}/>
     </div>
   )
 }
