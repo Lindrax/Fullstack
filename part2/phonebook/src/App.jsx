@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import personService from './services/persons'
 
 const Filter=({filt, handleFilt}) =>{
   return(
@@ -22,7 +23,6 @@ const NewPerson=({newName, newNumber, handeNumberChange, handleNameChange, addNa
           <button type="submit">add</button>
         </div>
       </form>
-
   )
 }
 
@@ -51,10 +51,10 @@ const App = () => {
   )
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
@@ -65,27 +65,27 @@ const App = () => {
   const addName = (event) =>{
     event.preventDefault()
     let d=0
-
     persons.forEach((element, index) => {
       if (element.name === newName) {
         d=1
       }
   })
-
     const newPerson = {
       name: newName,
       number: newNumber
     }
-
     if (d==1){
       alert(`${newName} is already added to phonebook`)
     }
     else{
-      setPersons(persons.concat(newPerson))
-      
+      personService
+        .create(newPerson)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNumber('')
+        })
     }
-    setNewName('')
-    setNumber('')
   }
 
   const handleNameChange=(event) => {
@@ -102,8 +102,6 @@ const App = () => {
     console.log(event.target.value)
     setFilt(event.target.value)
   }
-
-
 
   return (
     <div>
