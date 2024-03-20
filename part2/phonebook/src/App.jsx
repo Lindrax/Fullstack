@@ -38,6 +38,18 @@ const Showed=({ToShow, del})=>{
   )
 }
 
+const Notification = ({ message, type }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className={type}>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState(
@@ -47,10 +59,11 @@ const App = () => {
     ''
   )
   const [show, setShow] = useState(true)
-
   const [filt ,setFilt] =useState(
     ''
   )
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [errorType, setErrorType] = useState('notification')
 
   useEffect(() => {
     personService
@@ -88,6 +101,13 @@ const App = () => {
           .update(id, changedperson)
           .then(response => {
             setPersons(persons.map(person => person.id !== id ? person : response))
+            setErrorType('notification')
+            setErrorMessage(
+              `Number changed succesfully`
+            )
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
           })
       }
     }
@@ -96,6 +116,13 @@ const App = () => {
         .create(newPerson)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
+          setErrorType('notification')
+          setErrorMessage(
+            `${newName} added succesfully`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
 
         })
     }
@@ -125,16 +152,32 @@ const App = () => {
         .del(id)
         .then(response => {
           setPersons(persons.filter(person => person.id !== id))
+          setErrorType('notification')
+          setErrorMessage(
+            `${name} deleted succesfully`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
         .catch(error => {
-          console.log('fail')
+          setErrorType('error')
+          setErrorMessage(
+            `information of ${name} has already been removed from server`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
+          console.log('fail')
+   
     }
 }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} type={errorType}/>
       
       <Filter filt={filt} handleFilt={handleFilt} />
       <h2>add a new</h2>
