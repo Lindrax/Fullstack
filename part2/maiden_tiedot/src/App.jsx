@@ -1,5 +1,7 @@
+
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+
 
 const Render =({handleCountry, filt}) =>{
   return(
@@ -9,9 +11,26 @@ const Render =({handleCountry, filt}) =>{
   )
 }
 
+
+
+
 const Match=({country}) =>{
+  const key = (import.meta.env.VITE_SOME_KEY)
+  const lat = country.capcordinates[0]
+  const lon = country.capcordinates[1]
+  const [weather, setWeather] = useState(null)
   
-  console.log(country)
+  useEffect(()=>{
+    axios
+    .get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${key}&units=metric`)
+    .then(response => {
+      setWeather(response.data)
+      
+    })
+  },[])
+  
+  console.log(weather)
+  
   return (
     <div>
     <h1>{country.name}</h1>
@@ -23,10 +42,20 @@ const Match=({country}) =>{
         <li key ={language}> {language}</li>)}
     </ul>
     <img src ={country.flag}/>
+    {weather && (
+      <div>
+    <h3>Weather in {country.capital}</h3>
+    <p>temperature {weather.main.temp} Celcius</p>
+    <img src ={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}/>
+    <p>wind {weather.wind.speed} m/s</p>
+    </div>
+    )}
     </div>
     
   )
 }
+
+
 
 const Showed=({ToShow, filt})=>{
   const [selected, setSelected] = useState(null)
@@ -90,7 +119,8 @@ const App = () => {
           capital: country.capital ? country.capital[0] : '',
           area: country.area,
           languages: country.languages ? Object.values(country.languages) : [],
-          flag: country.flags.png
+          flag: country.flags.png,
+          capcordinates: country.capitalInfo.latlng
         }))
         setCountries(countries)
       })
