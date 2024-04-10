@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import personService from './services/persons'
+const baseUrl = 'http://localhost:3001/api/persons'
 
 const Filter=({filt, handleFilt}) =>{
   return(
@@ -66,10 +66,11 @@ const App = () => {
   const [errorType, setErrorType] = useState('notification')
 
   useEffect(() => {
-    personService
-      .getAll()
+    axios
+      .get(baseUrl)
       .then(initialPersons => {
-        setPersons(initialPersons)
+        setPersons(initialPersons.data)
+        
       })
   }, [])
 
