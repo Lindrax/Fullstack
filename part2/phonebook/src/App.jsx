@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-const baseUrl = 'http://localhost:3001/api/persons'
+import personService from './services/persons'
 
 const Filter=({filt, handleFilt}) =>{
   return(
@@ -66,11 +66,10 @@ const App = () => {
   const [errorType, setErrorType] = useState('notification')
 
   useEffect(() => {
-    axios
-      .get(baseUrl)
+    personService
+      .getAll()
       .then(initialPersons => {
-        setPersons(initialPersons.data)
-        
+        setPersons(initialPersons)
       })
   }, [])
 
@@ -110,6 +109,16 @@ const App = () => {
               setErrorMessage(null)
             }, 5000)
           })
+          .catch(error => {
+            setErrorType('error')
+            console.log(error.response.data)
+            console.log("tsedaus")
+            
+            setErrorMessage(error.response.data.error)
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
+          })
       }
     }
     else{
@@ -124,7 +133,16 @@ const App = () => {
           setTimeout(() => {
             setErrorMessage(null)
           }, 5000)
-
+        })
+        .catch(error => {
+          setErrorType('error')
+          console.log(error.response.data)
+          console.log("tsedaus")
+          
+          setErrorMessage(error.response.data.error)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
     }
     setNewName('')
@@ -170,7 +188,7 @@ const App = () => {
             setErrorMessage(null)
           }, 5000)
         })
-          console.log('fail')
+          
    
     }
 }
