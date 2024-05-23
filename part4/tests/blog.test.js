@@ -42,6 +42,81 @@ test('there are two blogs', async () => {
   assert.strictEqual(response.body.length, initialBlogs.length)
 })
 
+test('id is id', async () => {
+  const response = await api.get('/api/blogs')
+  const blogs = response.body
+  blogs.forEach(blog => {
+    assert.ok(blog.id)
+  })
+})
+
+test('a valid blog can be added', async () => {
+  const newBlog = {
+    'title': 'kolmas',
+    'author': 'meitsi',
+    'url': 'testaus13',
+    'likes': 2,
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+
+  const title = response.body.map(r => r.title)
+
+  assert.strictEqual(response.body.length, initialBlogs.length +1)
+  assert(title.includes('kolmas'))
+})
+
+test('a blog without likes has 0 likes', async () => {
+  const newBlog = {
+    'title': 'neljäs',
+    'author': 'meitsi',
+    'url': 'testaus14',
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  assert.strictEqual(response.body.likes, 0)
+})
+
+test('a blog without title is rejected', async () => {
+  const blogWoTitle = {
+    'author': 'meitsi',
+    'url': 'testaus14',
+    'likes': 20
+  }
+  const response = await api
+    .post('/api/blogs')
+    .send(blogWoTitle)
+    .expect(400)
+  console.log(response.body)
+})
+
+test('a blog without url is rejected', async () => {
+  const blogWoUrl = {
+    'title': 'neljäs',
+    'author': 'meitsi',
+    'likes': 21
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .send(blogWoUrl)
+    .expect(400)
+  console.log(response.body)
+})
+
+
 after(async () => {
   await mongoose.connection.close()
 })
+
