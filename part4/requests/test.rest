@@ -1,3 +1,9 @@
+POST http://localhost:3001/api/users
+Content-Type: application/json
 
+{
+    "username": "mli",
+    "name": "Matti Luukkainen",
+    "password": "salainen"
+}
 
-DELETE http://localhost:3001/api/blogs/664f1e12326b72eb204ef89e
