@@ -12,8 +12,6 @@ const User = require('../models/user')
 const Blog = require('../models/blog')
 
 
-
-
 describe('when there is initially one user at db', () => {
   beforeEach(async () => {
     await User.deleteMany({})
@@ -112,7 +110,27 @@ describe('when there is initially one user at db', () => {
 describe('blogs', () =>  {
   beforeEach(async () => {
     await Blog.deleteMany({})
-    await Blog.insertMany(helper.initialBlogs)
+    const user = await helper.usersInDb()
+    const id = user[0].id
+    const initialBlogs = [
+      {
+        'title': 'testi',
+        'author': 'axel',
+        'url': 'testaus123',
+        'likes': 1,
+        'id': '664b15720a0c7495ce688324',
+        'user': id
+      },
+      {
+        'title': 'toinen',
+        'author': 'axel',
+        'url': 'testaus12',
+        'likes': 1,
+        'id': '664b1ed9eaf031574cdf2ef3',
+        'user': id
+      }
+    ]
+    await Blog.insertMany(initialBlogs)
   })
 
 
@@ -137,11 +155,13 @@ describe('blogs', () =>  {
       'author': 'meitsi',
       'url': 'testaus13',
       'likes': 2,
-      'user': '664b15720a0c7495ce688324'
     }
 
+    const token = await helper.tokenHelper()
+    console.log(token)
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -155,14 +175,16 @@ describe('blogs', () =>  {
   })
 
   test('a blog without likes has 0 likes', async () => {
+
     const newBlog = {
       'title': 'neljäs',
       'author': 'meitsi',
       'url': 'testaus14',
     }
-
+    const token = await helper.tokenHelper()
     const response = await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -171,6 +193,7 @@ describe('blogs', () =>  {
   })
 
   test('a blog without title is rejected', async () => {
+    const token = await helper.tokenHelper()
     const blogWoTitle = {
       'author': 'meitsi',
       'url': 'testaus14',
@@ -178,6 +201,7 @@ describe('blogs', () =>  {
     }
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(blogWoTitle)
       .expect(400)
 
@@ -186,6 +210,7 @@ describe('blogs', () =>  {
   })
 
   test('a blog without url is rejected', async () => {
+    const token = await helper.tokenHelper()
     const blogWoUrl = {
       'title': 'neljäs',
       'author': 'meitsi',
@@ -194,6 +219,7 @@ describe('blogs', () =>  {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(blogWoUrl)
       .expect(400)
 
@@ -205,10 +231,13 @@ describe('blogs', () =>  {
 
   test('deletion of a blogs', async() => {
     const blogsAtStart = await helper.blogsInDb()
+    console.log(blogsAtStart)
     const blogToDelete = blogsAtStart[0]
 
+    const token = await helper.tokenHelper()
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `Bearer ${token}`)
       .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
@@ -232,6 +261,18 @@ describe('blogs', () =>  {
       .send(newblog)
 
     assert.strictEqual(response.body.likes, newblog.likes)
+  })
+  test('posting a blog fails without a token', async () => {
+    const newBlog = {
+      'title': 'kolmas',
+      'author': 'meitsi',
+      'url': 'testaus13',
+      'likes': 2,
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
 
   })
 })

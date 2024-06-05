@@ -1,5 +1,11 @@
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const supertest = require('supertest')
+const app = require('../app')
+const api = supertest(app)
+
+
+
 
 const initialBlogs = [
   {
@@ -7,7 +13,7 @@ const initialBlogs = [
     'author': 'axel',
     'url': 'testaus123',
     'likes': 1,
-    'id': '664b15720a0c7495ce688324'
+    'id': '664b15720a0c7495ce688324',
   },
   {
     'title': 'toinen',
@@ -28,8 +34,21 @@ const usersInDb = async () => {
   return users.map(u => u.toJSON())
 }
 
+const tokenHelper = async () => {
+  const user = {
+    username: 'root',
+    password: 'sekret',
+  }
+  const a = await api
+    .post('/api/login')
+    .send(user)
+  return a.body.token
+}
+
+
 module.exports = {
   initialBlogs,
   blogsInDb,
-  usersInDb
+  usersInDb,
+  tokenHelper
 }
