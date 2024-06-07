@@ -14,11 +14,11 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [errorType, setErrorType] = useState('notification')
 
-  
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -30,8 +30,8 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = async ({username, password}) => {
-    
+  const handleLogin = async ({ username, password }) => {
+
     try {
       const user = await loginService.login({
         username, password
@@ -39,7 +39,7 @@ const App = () => {
       window.localStorage.setItem(
         'loggedUser', JSON.stringify(user)
       )
-      
+
       blogService.setToken(user.token)
       setUser(user)
       setErrorType('notification')
@@ -57,11 +57,11 @@ const App = () => {
     }
   }
 
-  const addBlog= (blogObject) => {  
+  const addBlog= (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService
       .create(blogObject)
-        .then(returnedBlog => {
+      .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
         setErrorType('notification')
         setErrorMessage(`added ${blogObject.title}, by ${blogObject.author} succesfully`)
@@ -76,19 +76,19 @@ const App = () => {
           setErrorMessage(null)
         }, 5000)
       })
-      
+
   }
 
   const logOut =() => {
     window.localStorage.clear()
     setErrorType('notification')
-    setErrorMessage(`logged out succesfully`)
+    setErrorMessage('logged out succesfully')
     setTimeout(() => {
       setErrorMessage(null)
     }, 5000)
     location.reload()
   }
-  
+
   const blogFormRef = useRef()
 
   if (user === null) {
@@ -107,7 +107,7 @@ const App = () => {
       <h2>blogs</h2>
       <p>{user.name} is logged in <button onClick={logOut}>logout</button> </p>
       <Notification message={errorMessage} type={errorType}/>
-      <div style={{ marginBottom: '20'}}>
+      <div style={{ marginBottom: '20' }}>
         <Togglable buttonLabel='new blog' ref={blogFormRef}>
           <BlogForm createBlog={addBlog} />
         </Togglable>
