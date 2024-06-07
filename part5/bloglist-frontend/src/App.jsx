@@ -1,20 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
+import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState("")
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
-  const [url, setUrl] = useState("")
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [errorType, setErrorType] = useState('notification')
+
   
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -31,11 +32,11 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
+  const handleLogin = async ({username, password}) => {
+    
     try {
       const user = await loginService.login({
-        username, password,
+        username, password
       })
       window.localStorage.setItem(
         'loggedUser', JSON.stringify(user)
@@ -43,8 +44,6 @@ const App = () => {
       
       blogService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
       setErrorType('notification')
       setErrorMessage('logged in succesfully')
       setTimeout(() => {
@@ -60,27 +59,17 @@ const App = () => {
     }
   }
 
-  const addBlog= (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: title,
-      author: author,
-      url: url
-    }
-  
+  const addBlog= (blogObject) => {  
+    blogFormRef.current.toggleVisibility()
     blogService
       .create(blogObject)
         .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
         setErrorType('notification')
-        setErrorMessage(`added ${title}, by ${author} succesfully`)
+        setErrorMessage(`added ${blogObject.title}, by ${blogObject.author} succesfully`)
         setTimeout(() => {
           setErrorMessage(null)
         }, 5000)
-        setNewBlog('')
-        setTitle('')
-        setAuthor('')
-        setUrl('')
       })
       .catch(error => {
         setErrorType('error')
@@ -93,7 +82,6 @@ const App = () => {
   }
 
   const logOut =() => {
-    console.log('toimii')
     window.localStorage.clear()
     setErrorType('notification')
     setErrorMessage(`logged out succesfully`)
@@ -102,72 +90,15 @@ const App = () => {
     }, 5000)
     location.reload()
   }
-
-
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-        <div>
-          username
-            <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-            <input
-            type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button type="submit">login</button>
-      </form> 
-  )
-
-  const handleTitle = (event) => {
-    setTitle(event.target.value)
-  }
-  const handleAuthor = (event) => {
-    setAuthor(event.target.value)
-  }
-  const handleUrl = (event) => {
-    setUrl(event.target.value)
-  }
-
-  const blogForm = () => (
-    <form onSubmit={addBlog}>
-      <div>
-      title:<input
-        value={title}
-        onChange={handleTitle}
-      />
-      </div>
-      <div>
-      author:<input
-        value={author}
-        onChange={handleAuthor}
-      />
-      </div>
-      <div>
-      url:<input
-        value={url}
-        onChange={handleUrl}
-      />
-      </div>
-      <button type="submit">create</button>
-    </form>  
-  )
   
+  const blogFormRef = useRef()
+
   if (user === null) {
     return (
       <div>
         <h2>Log in to application</h2>
         <Notification message={errorMessage} type={errorType}/>
-        {loginForm()}
+        <LoginForm handleLogin={handleLogin}/>
       </div>
     )
   }
@@ -175,11 +106,11 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      
       <p>{user.name} is logged in <button onClick={logOut}>logout</button> </p>
-      <h2>create a new blog</h2>
       <Notification message={errorMessage} type={errorType}/>
-      {blogForm()}
+      <Togglable buttonlabel='new blog' ref={blogFormRef}>
+        <BlogForm createBlog={addBlog} />
+      </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
