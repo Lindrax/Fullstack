@@ -10,8 +10,6 @@ import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [errorType, setErrorType] = useState('notification')
@@ -103,6 +101,7 @@ const App = () => {
     )
   }
 
+  const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
   return (
     <div>
       <h2>blogs</h2>
@@ -114,8 +113,8 @@ const App = () => {
         </Togglable>
       </div>
       <div>
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} />
+        {sortedBlogs.map(blog =>
+          <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} user={user} />
         )}
       </div>
     </div>
