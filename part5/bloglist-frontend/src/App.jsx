@@ -108,7 +108,7 @@ const App = () => {
       <p>{user.name} is logged in <button onClick={logOut}>logout</button> </p>
       <Notification message={errorMessage} type={errorType}/>
       <div style={{ marginBottom: '20'}}>
-        <Togglable buttonlabel='new blog' ref={blogFormRef}>
+        <Togglable buttonLabel='new blog' ref={blogFormRef}>
           <BlogForm createBlog={addBlog} />
         </Togglable>
       </div>
