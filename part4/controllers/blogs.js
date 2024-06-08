@@ -50,7 +50,6 @@ blogsRouter.delete('/:id',userExtractor, async (request, response) => {
 blogsRouter.put('/:id', async (request, response) => {
   const body = request.body
   const user = body.user
-  console.log(user)
   const blog = {
     title: body.title,
     author: body.author,

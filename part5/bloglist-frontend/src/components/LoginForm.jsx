@@ -15,7 +15,7 @@ const LoginForm = ({ handleLogin }) => {
     setPassword('')
   }
 
-  LoginForm.PropTypes = {
+  LoginForm.propTypes = {
     handleLogin: PropTypes.func.isRequired
   }
 
