@@ -11,6 +11,13 @@ describe('Blog app', () => {
         password: 'salainen'
       }
     })
+    await request.post('/api/users', {
+      data: {
+        name: 'testaus',
+        username: 'test',
+        password: 'super'
+      }
+    })
 
     await page.goto('/')
   })
@@ -59,10 +66,49 @@ describe('Blog app', () => {
         await page.getByRole('button', {name:'like'}).click()
         await expect(page.getByText('likes 1')).toBeVisible()
       })
+
+      test('removing a blog', async ({ page }) => {
+        page.on('dialog', async (dialog ) => 
+          {await dialog.accept()}
+        )
+        await page.getByRole('button', {name:'view'}).click()
+        await page.getByRole('button', {name: 'remove'}).click()
+
+        await expect(page.getByText('playwright.com')).not.toBeVisible()
+      })
+
+      describe('another user is logged in', () => {
+        beforeEach(async ({ page }) => {
+          await page.getByRole('button', {name:'logout'}).click()
+          await loginWith(page, 'test', 'super')
+          })
+          
+        test('remove button is not visible for someone elses blog', async ({ page }) => {
+          await expect(page.getByText('a blog created by playwright playwright')).toBeVisible()  
+          await page.getByRole('button', {name:'view'}).click()
+          await expect(page.getByRole('button', {name: 'remove'})).not.toBeVisible()
+        })
+        })
+      describe('multiple blogs exist', () => {
+        beforeEach(async ({ page }) => {
+          await createBlog(page, 'most liked blog', true)
+        })
+        test('most liked blog is first', async ({ page }) => {
+          await page.getByRole('button', {name:'view'}).first().click()
+          await page.getByRole('button', {name:'like'}).first().click()
+          const blogPosts = await page.locator('.blog')
+          const firstBlogPost = await blogPosts.first().textContent()
+          await expect(firstBlogPost).toContain('a blog created by')
+          await page.getByRole('button', {name:'view'}).last().click()
+          await page.getByRole('button', {name:'like'}).last().click()
+          await page.getByRole('button', {name:'like'}).last().click()
+          await page.getByRole('button', {name:'like'}).last().click()
+
+          const posts = await page.locator('.blog')
+          const first = await posts.first().textContent()
+          await expect(first).toContain('most liked')
+        })
+      })
     })
-
-
-
   })
 })
-
