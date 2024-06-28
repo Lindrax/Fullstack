@@ -15,11 +15,9 @@ const Anecdotes = () => {
     return filteredAnecdotes.sort((a, b) => b.votes - a.votes);
   })
   const vote = (anecdote) => {
-    dispatch(addVote(anecdote.id))
-    dispatch(setNotification(`voted" ${anecdote.content}"`))
-    setTimeout(() => {
-      dispatch(setNotification(null));
-    }, 5000)
+    dispatch(addVote(anecdote))
+    dispatch(setNotification(`voted" ${anecdote.content}"`, 100))
+
 
   }
 
