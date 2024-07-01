@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 const baseUrl = 'http://localhost:3001/anecdotes'
 
-const AnecdoteForm = () => {
+const AnecdoteForm = ({ dispatch}) => {
   const queryClient = useQueryClient()
 
   const createAnecdote = async newAnecdote =>{
@@ -15,6 +15,12 @@ const AnecdoteForm = () => {
     mutationFn: createAnecdote,
     onSuccess: (newAnecdote) => {
       queryClient.invalidateQueries({queryKey: ['anecdotes']})
+    },
+    onError: () => {
+      dispatch({ type: 'SET', payload: `too short, anecdote must have length 5 or more"` })
+      setTimeout(() => {
+        dispatch({ type: 'NUL' })
+      }, 5000)
     }
   })
 
@@ -22,14 +28,20 @@ const AnecdoteForm = () => {
     event.preventDefault()
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
-    console.log('new anecdote')
-    const anecdote = {
-      content: content,
-      votes: 0
+     
+      console.log('new anecdote')
+      const anecdote = {
+        content: content,
+        votes: 0
+      }
+      newAnecdoteMutation.mutate(anecdote)
+      dispatch({ type: 'SET', payload: `Created anecdote: "${content}"` })
+      setTimeout(() => {
+        dispatch({ type: 'NUL' })
+      }, 5000)
     }
-    newAnecdoteMutation.mutate(anecdote)
-    
-}
+
+
 
   return (
     <div>
