@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useMutation } from "@apollo/client"
+import { useMutation, useQuery } from "@apollo/client"
 import { UPDATE_AUTHOR } from "../queries"
 import { ALL_AUTHORS } from "../queries"
 
@@ -7,6 +7,7 @@ import { ALL_AUTHORS } from "../queries"
 const Authors = (props) => {
   const [name, setName] = useState('')
   const [born, setBorn] = useState('')
+  const authors = useQuery(ALL_AUTHORS)
 
   const [ changedAuthor ] = useMutation(UPDATE_AUTHOR, {
     refetchQueries: [  { query: ALL_AUTHORS } ],
@@ -21,7 +22,7 @@ const Authors = (props) => {
 
     changedAuthor({ variables: { name, born: parseInt(born) } })
 
-    setName('')
+    
     setBorn('')
   }
 
@@ -29,13 +30,13 @@ const Authors = (props) => {
   if (!props.show) {
     return null
   }
-  const request = props.authors
+  const request = authors
   
   if ( request.loading ) {
     return <div>loading...</div>
   }
 
-  const authors = request.data.allAuthors
+  const authorlist = request.data.allAuthors
   return (
     <div>
       <h2>authors</h2>
@@ -46,7 +47,7 @@ const Authors = (props) => {
             <th>born</th>
             <th>books</th>
           </tr>
-          {authors.map((a) => (
+          {authorlist.map((a) => (
             <tr key={a.name}>
               <td>{a.name}</td>
               <td>{a.born}</td>
@@ -59,7 +60,7 @@ const Authors = (props) => {
       <form onSubmit={submit}>
         <div>
           <select onChange={({ target }) => setName(target.value)}>
-            {authors.map((a) => (
+            {authorlist.map((a) => (
               <option  key={a.name} value={a.name}>
                 {a.name}</option>
             ))}

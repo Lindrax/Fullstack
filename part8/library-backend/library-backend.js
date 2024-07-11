@@ -53,7 +53,7 @@ let authors = [
 ]
 
 
-/*let books = [
+let books = [
   {
     title: 'Clean Code',
     published: 2008,
@@ -103,7 +103,7 @@ let authors = [
     id: "afa5de04-344d-11e9-a414-719c6709cf3e",
     genres: ['classic', 'revolution']
   },
-]*/
+]
 
 
 
