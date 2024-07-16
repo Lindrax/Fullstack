@@ -7,7 +7,6 @@ interface Result {
   target: number;
   average: number;
 }
-
 const calculateExercises = (hours: number[], target: number): Result => {
   const average = hours.reduce((s, c) => s + c, 0) / hours.length;
   const ratio = average / target;
