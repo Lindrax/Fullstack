@@ -4,7 +4,7 @@ import { NewPatientEntry } from "../types";
 
 import { nonSsnPatient, Patient } from "../types";
 
-const patients: nonSsnPatient[] = patientsData;
+const patients: Patient[] = patientsData;
 
 const getEntries = (): nonSsnPatient[] => {
   return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
@@ -14,6 +14,10 @@ const getEntries = (): nonSsnPatient[] => {
     gender,
     occupation,
   }));
+};
+
+const getAll = (): Patient[] => {
+  return patients;
 };
 
 const addPatient = (entry: NewPatientEntry): Patient => {
@@ -28,4 +32,5 @@ const addPatient = (entry: NewPatientEntry): Patient => {
 export default {
   getEntries,
   addPatient,
+  getAll,
 };

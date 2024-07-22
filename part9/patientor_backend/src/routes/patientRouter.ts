@@ -10,6 +10,19 @@ router.get("/", (_req, res) => {
   res.send(data);
 });
 
+router.get("/:id", (req, res) => {
+  const data = patientService.getAll();
+
+  console.log(req.params.id);
+  const patient = data.find((p) => p.id === req.params.id);
+  console.log(patient);
+  if (patient) {
+    res.send(patient);
+  } else {
+    res.status(404).send("no patient found");
+  }
+});
+
 router.post("/", (req, res) => {
   try {
     const newPatientEntry = toNewPatientEntry(req.body);
