@@ -10,12 +10,13 @@ const SinglePatient = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
   const [type, setType] = useState<string | null>(null);
+  const [update, setUpdate] = useState(0);
 
   useEffect(() => {
     axios
       .get(`http://localhost:3001/api/patients/${id}`)
       .then((response) => setPatient(response.data as Patient));
-  }, [id]);
+  }, [id, update]);
   console.log(patient);
 
   useEffect(() => {
@@ -43,7 +44,12 @@ const SinglePatient = () => {
       type: <button onClick={() => setType('Hospital')}>Hospital</button>{' '}
       <button onClick={() => setType('Occupational')}>Occupational</button>
       <button onClick={() => setType('HealthCheck')}>Healthcheck</button>
-      <EntryForm type={type as string} id={id as string} />
+      <EntryForm
+        type={type as string}
+        id={id as string}
+        patient={patient}
+        set={setUpdate}
+      />
       <h4>entries</h4>
       {patient.entries.map((e) => (
         <fieldset key={e.id}>

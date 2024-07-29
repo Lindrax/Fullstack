@@ -30,7 +30,6 @@ const addEntry = (entry: EntryWithoutId, id: string): Entry => {
   console.log(patient);
   patient?.entries.push(newEntry);
   return newEntry;
-  //findpatient and then push into patient.entries
 };
 
 const addPatient = (entry: NewPatientEntry): Patient => {

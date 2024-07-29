@@ -1,7 +1,18 @@
 import { SyntheticEvent, useState } from 'react';
 import axios from 'axios';
+import { Patient } from '../types';
 
-const EntryForm = ({ id, type }: { id: string; type: string }) => {
+const EntryForm = ({
+  id,
+  type,
+  patient,
+  set,
+}: {
+  id: string;
+  type: string;
+  patient: Patient;
+  set: React.Dispatch<React.SetStateAction<number>>;
+}) => {
   const [desc, setDesc] = useState('');
   const [date, setDate] = useState('');
   const [spec, setSpec] = useState('');
@@ -21,7 +32,10 @@ const EntryForm = ({ id, type }: { id: string; type: string }) => {
     axios
       .post(`http://localhost:3001/api/patients/${id}/entries`, entry)
       .then((response) => {
-        console.log(response);
+        console.log(response.data);
+
+        patient.entries.push(response.data);
+        set(1);
       })
       .catch((error) => alert(error));
   };
