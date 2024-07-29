@@ -18,6 +18,18 @@ const isGender = (param: string): param is Gender => {
     .includes(param);
 };
 
+const isRating = (param: number): param is HealthCheckRating => {
+  return Object.values(HealthCheckRating).includes(param);
+};
+
+const parseRating = (rating: unknown): HealthCheckRating => {
+  const numericRating = Number(rating); // Convert string to number
+  if (!isRating(numericRating)) {
+    throw new Error('Incorrect rating');
+  }
+  return numericRating; // Return as HealthCheckRating
+};
+
 const parseName = (name: unknown): string => {
   if (!name || !isString(name)) {
     throw new Error('Incorrect or missing name');
@@ -124,7 +136,7 @@ export const toNewEntry = (object: unknown): EntryWithoutId => {
             description: object.description as string,
             date: object.date as string,
             specialist: object.specialist as string,
-            healthCheckRating: object.healthCheckRating as HealthCheckRating,
+            healthCheckRating: parseRating(object.healthCheckRating),
           };
           if ('diagnosisCodes' in object) {
             newEntry = {

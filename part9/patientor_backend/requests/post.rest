@@ -1,0 +1,11 @@
+POST http://localhost:3001/api/patients/d27736ec-f723-11e9-8f0b-362b9e155667/entries
+Content-Type: application/json
+
+{
+  "type": "HealthCheck",
+  "description": "testing part",
+  "date": "12",
+  "specialist": "axel",
+  "healthCheckRating": "1"
+
+}

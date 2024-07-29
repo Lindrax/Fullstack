@@ -3,11 +3,13 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Diagnosis, Patient } from '../types';
 import EntryDetails from './entry';
+import EntryForm from './entryForm';
 
 const SinglePatient = () => {
   const id = useParams().id;
   const [patient, setPatient] = useState<Patient | null>(null);
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+  const [type, setType] = useState<string | null>(null);
 
   useEffect(() => {
     axios
@@ -30,13 +32,18 @@ const SinglePatient = () => {
   const findDiagnosis = (code: string) => {
     return diagnoses.find((diagnosis) => diagnosis.code === code);
   };
-
+  console.log(type);
   return (
     <div>
       <h2> {patient.name} </h2>
       <p>gender: {patient.gender}</p>
       <p>ssh: {patient.ssn}</p>
       <p>occupation: {patient.occupation}</p>
+      <h4>add entry</h4>
+      type: <button onClick={() => setType('Hospital')}>Hospital</button>{' '}
+      <button onClick={() => setType('Occupational')}>Occupational</button>
+      <button onClick={() => setType('HealthCheck')}>Healthcheck</button>
+      <EntryForm type={type as string} id={id as string} />
       <h4>entries</h4>
       {patient.entries.map((e) => (
         <fieldset key={e.id}>
